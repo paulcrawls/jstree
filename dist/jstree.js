@@ -1740,7 +1740,7 @@
 				}
 			}
 			//node.childNodes[1].appendChild(d.createTextNode(obj.text));
-			node.childNodes[1].innerHTML += obj.text;
+			node.childNodes[1].innerHTML = node.childNodes[1].innerHTML + '<span>' + obj.text + '</span>';
 			// if(obj.data) { $.data(node, obj.data); } // always work with node's data, no need to touch jquery store
 
 			if(deep && obj.children.length && obj.state.opened && obj.state.loaded) {
@@ -5210,7 +5210,9 @@
 		 * @name $.jstree.defaults.search.search_leaves_only
 		 * @plugin search
 		 */
-		search_leaves_only : false
+		search_leaves_only : false,
+
+        ignore_quots : false
 	};
 
 	$.jstree.plugins.search = function (options, parent) {
@@ -5317,9 +5319,10 @@
 			this._data.search.res = [];
 			this._data.search.opn = [];
 
-			f = new $.vakata.search(str, true, { caseSensitive : s.case_sensitive, fuzzy : s.fuzzy });
+			f = new $.vakata.search(str, true, { caseSensitive : s.case_sensitive, fuzzy : s.fuzzy, ignoreQuots : s.ignore_quots });
 
 			$.each(this._model.data, function (i, v) {
+                v.text = $("<div>").html(v.text).text();
 				if(v.text && f.search(v.text).isMatch && (!s.search_leaves_only || (v.state.loaded && v.children.length === 0)) ) {
 					r.push(i);
 					p = p.concat(v.parents);
@@ -5405,6 +5408,7 @@
 				options.fuzzy = true;
 			}
 			pattern = options.caseSensitive ? pattern : pattern.toLowerCase();
+
 			var MATCH_LOCATION	= options.location || 0,
 				MATCH_DISTANCE	= options.distance || 100,
 				MATCH_THRESHOLD	= options.threshold || 0.6,
@@ -5436,7 +5440,7 @@
 				};
 			}
 			search = function (text) {
-				text = options.caseSensitive ? text : text.toLowerCase();
+                text = options.caseSensitive ? text : text.toLowerCase();
 				if(pattern === text || text.indexOf(pattern) !== -1) {
 					return {
 						isMatch: true,
