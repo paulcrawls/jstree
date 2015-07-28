@@ -1740,7 +1740,7 @@
 				}
 			}
 			//node.childNodes[1].appendChild(d.createTextNode(obj.text));
-			node.childNodes[1].innerHTML += obj.text;
+			node.childNodes[1].innerHTML = node.childNodes[1].innerHTML + '<span>' + obj.text + '</span>';
 			// if(obj.data) { $.data(node, obj.data); } // always work with node's data, no need to touch jquery store
 
 			if(deep && obj.children.length && obj.state.opened && obj.state.loaded) {
